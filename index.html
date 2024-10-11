@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Translation App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+        .jumbotron {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 2rem 1rem;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .alert {
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Hybrid Translation App</h1>
+            <p class="lead">Translate English sentences to French using a hybrid LSTM-GRU model.</p>
+        </div>
+        <div class="card p-4 mb-5">
+            <!-- Ensure form sends POST request -->
+            <form id="translation-form" method="POST">
+                <div class="form-group">
+                    <label for="input_text">Enter English text:</label>
+                    <textarea class="form-control" id="input_text" name="input_text" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Translate</button>
+            </form>
+            <hr>
+            <div id="result" class="alert" role="alert" style="display:none;">
+                <h4 class="alert-heading">Translated Text:</h4>
+                <p id="translated_text"></p>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2024 Hybrid Translation App. All rights reserved.
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- AJAX call to handle form submission -->
+    <script>
+        $(document).ready(function() {
+            $('#translation-form').on('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                var inputText = $('#input_text').val(); // Get input value
+                $.ajax({
+                    url: '/translate',  // POST to translate route
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ text: inputText }),  // Send data in JSON format
+                    success: function(response) {
+                        $('#translated_text').text(response.translated_text);  // Display translated text
+                        $('#result').show();
+                    },
+                    error: function() {
+                        $('#translated_text').text('Error occurred during translation.');  // Error message
+                        $('#result').show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
